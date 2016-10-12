@@ -48,7 +48,7 @@ function solve(convergence_cutoff, f::Function)
     dif = Inf
     b = (1/n):(1/n):1
     β = 2/3 # norma de la matriu
-    x = ones(n)
+    x = zeros(n)
 	iterations = 0
     while dif > convergence_cutoff
         x = f(x̄, b)
