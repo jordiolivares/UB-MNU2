@@ -1,65 +1,65 @@
-function jacobi(oldX, b)
+function jacobi(x̄, b)
     n = 10^6
-    solution = zeros(n)
-    solution[1] = (b[1] - oldX[3] - oldX[n-1])
-    solution[2] = (b[2] - oldX[4] - oldX[n])
+    x = zeros(n)
+    x[1] = (b[1] - x̄[3] - x̄[n-1])
+    x[2] = (b[2] - x̄[4] - x̄[n])
     for i = 3:n-2
-        solution[i] = (b[i] - oldX[i-2] - oldX[i+2])
+        x[i] = (b[i] - x̄[i-2] - x̄[i+2])
     end
-    solution[n-1] = (b[n-1] - oldX[n-3] - oldX[1])
-    solution[n] = (b[n] - oldX[n-2] - oldX[2])
-    solution = solution * (1/3)
-	solution
+    x[n-1] = (b[n-1] - x̄[n-3] - x̄[1])
+    x[n] = (b[n] - x̄[n-2] - x̄[2])
+    x = x * (1/3)
+	x
 end
 
-function gauss_seidel(oldX, b)
-	sor(oldX, b, 1)
+function gauss_seidel(x̄, b)
+	sor(x̄, b, 1)
 end
 
-function sor_classe(oldX, b, ω)
+function sor_classe(x̄, b, ω)
 	n = 10^6
-	solution = zeros(n)
-	solution[1] = oldX[1] + (ω/3) * (b[1] - oldX[3] - oldX[n-1])
-	solution[2] = oldX[2] + (ω/3) * (b[2] - oldX[4] - oldX[n])
+	x = zeros(n)
+	x[1] = x̄[1] + (ω/3) * (b[1] - x̄[3] - x̄[n-1])
+	x[2] = x̄[2] + (ω/3) * (b[2] - x̄[4] - x̄[n])
 	for i = 3:n-2
-		solution[i] = oldX[i] + (ω/3) * (b[i] - solution[i-2] - oldX[i+2])
+		x[i] = x̄[i] + (ω/3) * (b[i] - x[i-2] - x̄[i+2])
 	end
-	solution[n-1] = oldX[n-1] + (ω/3) * (b[n-1] - solution[n-3] - solution[1])
-	solution[n] = oldX[n] + (ω/3) * (b[n] - solution[n-2] - solution[2])
-	return solution
+	x[n-1] = x̄[n-1] + (ω/3) * (b[n-1] - x[n-3] - x[1])
+	x[n] = x̄[n] + (ω/3) * (b[n] - x[n-2] - x[2])
+	x
 end
 
-function sor(oldX, b, ω)
+function sor(x̄, b, ω)
 	n = 10^6
-	solution = zeros(n)
-	solution[1] = (1-ω)oldX[1] + (ω/3) * (b[1] - oldX[3] - oldX[n-1])
-	solution[2] = (1-ω)oldX[2] + (ω/3) * (b[2] - oldX[4] - oldX[n])
+	x = zeros(n)
+	x[1] = (1-ω)x̄[1] + (ω/3) * (b[1] - x̄[3] - x̄[n-1])
+	x[2] = (1-ω)x̄[2] + (ω/3) * (b[2] - x̄[4] - x̄[n])
 	for i = 3:n-2
-		solution[i] = (1-ω)oldX[i] + (ω/3) * (b[i] - solution[i-2] - oldX[i+2])
+		x[i] = (1-ω)x̄[i] + (ω/3) * (b[i] - x[i-2] - x̄[i+2])
 	end
-	solution[n-1] = (1-ω)oldX[n-1] + (ω/3) * (b[n-1] - solution[n-3] - solution[1])
-	solution[n] = (1-ω)oldX[n] + (ω/3) * (b[n] - solution[n-2] - solution[2])
-	return solution
+	x[n-1] = (1-ω)x̄[n-1] + (ω/3) * (b[n-1] - x[n-3] - x[1])
+	x[n] = (1-ω)x̄[n] + (ω/3) * (b[n] - x[n-2] - x[2])
+	x
 end
 
 function solve(convergence_cutoff, f::Function)
     n = 10^6
-    oldX = randn(n)
+    x̄ = randn(n)
     dif = Inf
     b = (1/n):(1/n):1
     β = 2/3 # variable temporal que fa que la norma es multipliqui per 1
-    solution = zeros(n)
+    x = ones(n)
 	iterations = 0
     while dif > convergence_cutoff
 		# Canviar el mètode en aquí per sor_classe per a veure
 		# com divergeix
-        solution = f(oldX, b)
-        dif = (β/(1-β)) * norm((solution - oldX), Inf)
-        oldX = solution
+        x = f(x̄, b)
+        dif = (β/(1-β)) * norm((x - x̄), Inf)
+        x̄ = x
 		iterations += 1
     end
 	println("Iterations: $iterations")
-    return solution
+    return x
 end
 
 sol_jacobi = solve(1/(10^12), jacobi)
