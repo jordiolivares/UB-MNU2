@@ -47,12 +47,10 @@ function solve(convergence_cutoff, f::Function)
     x̄ = randn(n)
     dif = Inf
     b = (1/n):(1/n):1
-    β = 2/3 # variable temporal que fa que la norma es multipliqui per 1
+    β = 2/3 # norma de la matriu
     x = ones(n)
 	iterations = 0
     while dif > convergence_cutoff
-		# Canviar el mètode en aquí per sor_classe per a veure
-		# com divergeix
         x = f(x̄, b)
         dif = (β/(1-β)) * norm((x - x̄), Inf)
         x̄ = x
