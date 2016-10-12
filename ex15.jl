@@ -42,10 +42,9 @@ function solve(convergence_cutoff, f::Function)
         x̄ = x
 		iterations += 1
     end
-	println("Iterations: $iterations")
+    println("Iterations: $iterations")
     return x
 end
 
-sol = solve(1/10^12, (x,y) -> steepestDescent(x, y, 1))
-println(sol[1:5])
-println(sol[end-5:end])
+sol = solve(1/10^12, (x,y) -> steepestDescent(x, y, 0.8))
+println(sol[1:10])
