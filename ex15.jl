@@ -47,4 +47,7 @@ function solve(convergence_cutoff, f::Function)
 end
 
 sol = solve(1/10^12, (x,y) -> steepestDescent(x, y, 0.8))
-println(sol[1:10])
+println("Steepest Descent:")
+println()
+map(x -> @printf("%.12f\n", x), sol[1:10])
+println()
