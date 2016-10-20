@@ -17,29 +17,29 @@ function ∇Q(x, b)
 	vector - b
 end
 
-function steepestDescent(x̄, b, ω)
-	p_k = ∇Q(x̄, b)
+function steepestDescent(oldX, b, ω)
+	p_k = ∇Q(oldX, b)
 	a_k = dot(p_k, p_k)/dot(transpA(p_k), p_k)
-	x = x̄ - ω * a_k * p_k
+	x = oldX - ω * a_k * p_k
 	x
 end
 
-function steepestDescent(x̄, b)
-	steepestDescent(x̄, b, 1)
+function steepestDescent(oldX, b)
+	steepestDescent(oldX, b, 1)
 end
 
 function solve(convergence_cutoff, f::Function)
 	n = 10^6
-	x̄ = randn(n)
+	solution = randn(n)
 	dif = Inf
 	b = (1/n):(1/n):1
 	β = 2/3 # norma de la matriu
 	x = zeros(n)
 	iterations = 0
 	while dif > convergence_cutoff
-		x = f(x̄, b)
-		dif = (β/(1-β)) * norm((x - x̄), Inf)
-		x̄ = x
+		x = f(solution, b)
+		dif = (β/(1-β)) * norm((x - solution), Inf)
+		solution = x
 		iterations += 1
 	end
 	println("Iterations: $iterations")
@@ -47,7 +47,7 @@ function solve(convergence_cutoff, f::Function)
 end
 
 sol = solve(1/10^12, (x,y) -> steepestDescent(x, y, 0.8))
-println("Steepest Descent:")
+println("Steepest Descent (ω = 0.8):")
 println()
 map(x -> @printf("%.12f\n", x), sol[1:10])
 println()
