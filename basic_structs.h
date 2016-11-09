@@ -1,6 +1,5 @@
 typedef struct vector vector;
-struct vector
-{
+struct vector {
     double *elements;
     int num_elems;
 };
