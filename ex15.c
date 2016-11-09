@@ -55,7 +55,7 @@ void print_sol(vector *vect) {
     return;
 }
 
-void steepest_descent(vector *old, vector *result, vector *b, double w) {
+double steepest_descent(vector *old, vector *result, vector *b, double w) {
     vector *p_k = malloc(sizeof(vector));
     vector *transp = malloc(sizeof(vector));
     transp->num_elems = N;
@@ -64,7 +64,8 @@ void steepest_descent(vector *old, vector *result, vector *b, double w) {
     p_k->elements = malloc(sizeof(double) * N);
     gradient(old, b, p_k);
     transpA(p_k, transp);
-    double a_k = dot(p_k, p_k) / dot(transp, p_k);
+    double error = dot(p_k, p_k);
+    double a_k =  error / dot(transp, p_k);
     for (int i = 0; i < result->num_elems; i++) {
         result->elements[i] = old->elements[i] - w * a_k * p_k->elements[i];
     }
@@ -72,13 +73,14 @@ void steepest_descent(vector *old, vector *result, vector *b, double w) {
     free(transp->elements);
     free(p_k);
     free(transp);
+    return sqrt(error);
 }
 
-void steepest_descent_optim(vector *old, vector *result, vector *b) {
-    steepest_descent(old, result, b, 0.8);
+double steepest_descent_optim(vector *old, vector *result, vector *b) {
+    return steepest_descent(old, result, b, 0.8);
 }
 
-vector *solve(double convergence_cutoff, solver func) {
+vector *solve(double convergence_cutoff, solver_error func) {
     vector *solution = malloc(sizeof(vector));
     solution->num_elems = N;
     solution->elements = malloc(sizeof(double) * N);
@@ -92,14 +94,13 @@ vector *solve(double convergence_cutoff, solver func) {
     for (int i = 0; i < N; i++) {
         b->elements[i] = ((double) (i + 1)) / ((double) N);
     }
-    double dif = INFINITY;
+    double error = INFINITY;
     vector *tmp;
-    while (dif > convergence_cutoff) {
-        func(oldX, solution, b);
+    while (error > convergence_cutoff) {
+        error = func(oldX, solution, b);
         tmp = oldX;
         oldX = solution;
         solution = tmp;
-        dif = (BETA / (1 - BETA)) * norm_infty(oldX, solution);
     }
     free(oldX);
     free(b);
