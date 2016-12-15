@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <math.h>
 
-#define DELTA (0.1)
+#define DELTA (0.01)
 #define EPSILON (1.0/10000000000.0)
 
 double f(double x, double y) {
