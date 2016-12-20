@@ -81,12 +81,25 @@ double norm2(double x, double y) {
     return sqrt(x * x + y * y);
 }
 
-void initialGuess(double x, double y, double guess[2]) {
+void initialGuess(double x, double y, double prev_dir[2], double guess[2]) {
     double tangent[2];
     gradF(x, y, tangent);
+    // Passem el gradient a tangent
+    double tmp = tangent[0];
+    tangent[0] = -tangent[1];
+    tangent[1] = tmp;
     double norm = norm2(tangent[0], tangent[1]);
-    guess[0] = x + DELTA * DELTA * (tangent[0] / norm);
-    guess[1] = y + DELTA * DELTA * (tangent[1] / norm);
+    if (prev_dir[0] * tangent[0] + prev_dir[1] * tangent[1] < 0) {
+        guess[0] = x - DELTA * (tangent[0] / norm);
+        guess[1] = y - DELTA * (tangent[1] / norm);
+        prev_dir[0] = -tangent[0];
+        prev_dir[1] = -tangent[1];
+    } else {
+        guess[0] = x + DELTA * (tangent[0] / norm);
+        guess[1] = y + DELTA * (tangent[1] / norm);
+        prev_dir[0] = tangent[0];
+        prev_dir[1] = tangent[1];
+    }
 }
 
 double vectorDifference2(double v1[2], double v2[2]) {
@@ -104,9 +117,9 @@ void swapVectors(double v1[2], double v2[2]) {
     v2[1] = tmp[1];
 }
 
-void calculateNextPoint(double center_point[2], double next_point[2]) {
+void calculateNextPoint(double center_point[2], double prev_dir[2], double next_point[2]) {
     double previous_point[2];
-    initialGuess(center_point[0], center_point[1], previous_point);
+    initialGuess(center_point[0], center_point[1], prev_dir, previous_point);
     newtonMethod(previous_point, next_point, center_point);
     while (fabs(f(next_point[0], next_point[1])) > THRESHOLD) {
         swapVectors(previous_point, next_point);
@@ -120,15 +133,14 @@ void calculateNextPoint(double center_point[2], double next_point[2]) {
 
 int main() {
     double initial_point[2], center_point[2], next_point[2];
-    //center_point[0] = initial_point[0] = -0.59220292723488865416; // X
-    //center_point[0] = initial_point[0] = -2.23490048993232548469;
     center_point[0] = initial_point[0] = X_0;
     center_point[1] = initial_point[1] = Y_0; // Y
+    double prev_dir[2] = {0, 0};
     printf("%.16f %.16f\n", initial_point[0], initial_point[1]);
     do {
-        calculateNextPoint(center_point, next_point);
+        calculateNextPoint(center_point, prev_dir, next_point);
         printf("%.16f %.16f\n", next_point[0], next_point[1]);
         swapVectors(center_point, next_point);
-    } while (vectorDifference2(center_point, initial_point) > DELTA * DELTA);
+    } while (vectorDifference2(center_point, initial_point) > DELTA);
     return 0;
 }
